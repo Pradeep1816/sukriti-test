@@ -1,6 +1,5 @@
 ## CLONE THE REPO
-git clone https://github.com/your-username/user-management-system.git
-
+git clone https://github.com/Pradeep1816/sukriti-test
 ###b  BACEKND-------------
 
 1.npm install for backend dependency
