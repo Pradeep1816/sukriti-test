@@ -6,7 +6,7 @@ function Header() {
     <div>
       <div className="w-[90%] m-auto flex items-center justify-between py-3">
         <div>
-          <NavLink to="/">Logo</NavLink>
+          <NavLink to="/">SUKRITI</NavLink>
         </div>
         <div className="flex gap-5">
           <NavLink to="/login">
