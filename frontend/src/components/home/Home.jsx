@@ -1,19 +1,17 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 function Home() {
   const [users, setUsers] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [updatedData, setUpdatedData] = useState({ name: "", email: "" });
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await axios.get("http://localhost:8080/api/v1/getUsers");
-      setUsers(res.data.data);
-    };
 
-    fetchUsers();
-  }, []);
-  console.log(users);
+  const useList = useSelector((state) => state.userSlice);
+
+  useEffect(() => {
+    setUsers(useList);
+  }, [useList]);
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm(
@@ -34,8 +32,8 @@ function Home() {
   };
 
   const handleEdit = (user) => {
-    setEditingUser(user);
-    setUpdatedData({ name: user.name, email: user.email });
+    setUserId(user._id);
+    setUpdatedData({ name: user.name || "", email: user.email || "" });
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,18 +43,22 @@ function Home() {
     }));
   };
 
-  const handleUpdate = async (id) => {
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
     try {
-      // Make the API call to update the user
-      await axios.put(`http://localhost:8080/api/v1/user/${id}`, updatedData);
+      await axios.put(
+        `http://localhost:8080/api/v1/user/${userId}`,
+        updatedData
+      );
 
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user._id === id ? { ...user, ...updatedData } : user
+          user._id === userId ? { ...user, ...updatedData } : user
         )
       );
 
-      setEditingUser(null);
+      setUserId(null);
       alert("User updated successfully!");
     } catch (error) {
       console.error("Error updating user", error);
@@ -84,7 +86,7 @@ function Home() {
                   <td>{user.email}</td>
                   <td>
                     <div className="flex gap-5">
-                      <button onClick={() => handleEdit(user._id)}>Edit</button>
+                      <button onClick={() => handleEdit(user)}>Edit</button>
                       <button onClick={() => handleDelete(user._id)}>
                         Delete
                       </button>
@@ -93,24 +95,16 @@ function Home() {
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan="3">No users found</td>
-              </tr>
+              <div className="text-center"> No users found</div>
             )}
           </tbody>
         </table>
       </div>
-      {editingUser && (
+      {userId && (
         <div className="mt-10">
           <div className="w-[50%] m-auto">
             <h2>Edit User</h2>
-            <form
-              className="mt-5"
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleUpdate(editingUser._id);
-              }}
-            >
+            <form className="mt-5" onSubmit={handleUpdate}>
               <div>
                 <label>Name: </label>
                 <input
