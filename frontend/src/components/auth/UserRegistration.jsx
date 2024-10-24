@@ -18,8 +18,8 @@ function UserRegistration() {
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.password != formData.confirmpassword) {
-        setError("confirm Password not match");
+      if (formData.password !== formData.confirmpassword) {
+        setError("Confirm password not match");
       } else {
         setError("");
         const res = await axios.post(
@@ -33,8 +33,8 @@ function UserRegistration() {
           password: "",
           confirmpassword: "",
         });
+        window.location.href = "/";
       }
-      window.location.href = "/";
     } catch (error) {
       console.log(error.response);
     }
